@@ -33,23 +33,12 @@ document.addEventListener("DOMContentLoaded", function() {
                 <td>${alimento}</td>
                 <td><select class="quantidade">${options.map(option => `<option value="${option}">${option}</option>`).join('')}</select></td>
                 <td><select class="peguei">${options.map(option => `<option value="${option}">${option}</option>`).join('')}</select></td>
-                <td><input type="text" class="valor-" placeholder="R$ 0,00" oninput="formatCurrency(this)"></td>
+                <td><input type="text" class="valor-unitario" placeholder="R$ 0,00" oninput="formatCurrency(this)"></td>
                 <td><input type="text" class="valor-atual" placeholder="R$ 0,00" oninput="formatCurrency(this)"></td>
             `;
         }
         tabelaBody.appendChild(newRow);
     });
-
-    const totalRow = document.createElement('tr');
-    totalRow.innerHTML = `
-        <td style="font-weight: bold;">Total</td>
-        <td colspan="2"></td>
-        <td id="total-valor-unitario">R$ 0,00</td>
-        <td id="total-valor-atual">R$ 0,00</td>
-    `;
-    tabelaBody.appendChild(totalRow);
-
-   
 
     function verificarAlerta() {
         const rows = tabelaBody.querySelectorAll('tr');
@@ -71,41 +60,44 @@ document.addEventListener("DOMContentLoaded", function() {
     tabelaBody.addEventListener('change', verificarAlerta);
 
     verificarAlerta();
-});
 
-function formatCurrency(input) {
-    let value = input.value;
-    value = value.replace(/\D/g, ""); 
-    value = (value / 100).toFixed(2) + ""; 
-    value = value.replace(".", ","); 
-    value = value.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1."); 
-    input.value = "R$ " + value;
-    updateTotal(input);
-}
+    function formatCurrency(input) {
+        let value = input.value;
+        value = value.replace(/\D/g, "");
+        value = (value / 100).toFixed(2) + "";
+        value = value.replace(".", ",");
+        value = value.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
+        input.value = "R$ " + value;
+        updateTotal(input);
+    }
 
+    function updateTotal(input) {
+        const tabelaBody = document.querySelector('#tabela-alimentos tbody');
+        const isValorUnitario = input.classList.contains('valor-unitario');
+        const cells = isValorUnitario
+            ? tabelaBody.querySelectorAll('td input.valor-unitario')
+            : tabelaBody.querySelectorAll('td input.valor-atual');
 
-function updateTotal(input) {
-    const tabelaBody = document.querySelector('#tabela-alimentos tbody');
-    const isValorUnitario = input.classList.contains('valor-unitario');
-    const cells = isValorUnitario
-        ? tabelaBody.querySelectorAll('td input.valor-unitario')
-        : tabelaBody.querySelectorAll('td input.valor-atual');
+        let total = 0;
+        cells.forEach(cell => {
+            const valor = parseFloat(cell.value.replace(/[^\d,]/g, '').replace(',', '.'));
+            if (!isNaN(valor)) {
+                total += valor;
+            }
+        });
 
-    let total = 0;
-    cells.forEach(cell => {
-        const valor = parseFloat(cell.value.replace(/[^\d,]/g, '').replace(',', '.'));
-        if (!isNaN(valor)) {
-            total += valor;
-        }
-    });
+        const totalCell = isValorUnitario 
+            ? document.getElementById('total-valor-unitario') 
+            : document.getElementById('total-valor-atual');
+        totalCell.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+    }
 
-    const totalCell = isValorUnitario 
-        ? document.getElementById('total-valor-unitario') 
-        : document.getElementById('total-valor-atual');
-    totalCell.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
-}
+    function calcularValorAtual(row) {
+        const quantidade = parseFloat(row.querySelector('select.peguei').value) || 0;
+        const valorUnitario = parseFloat(row.querySelector('.valor-unitario').value.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
+        return quantidade * valorUnitario;
+    }
 
-    // Atualiza o valor atual quando houver mudança nos campos 'Peguei' ou 'Valor unitário'
     tabelaBody.addEventListener('change', function(event) {
         const target = event.target;
         if (target.classList.contains('peguei') || target.classList.contains('valor-unitario')) {
@@ -115,6 +107,4 @@ function updateTotal(input) {
             updateTotal(target);
         }
     });
-
-    // Inicializa o total
-    updateTotal();
+});

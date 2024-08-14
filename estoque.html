@@ -8,26 +8,25 @@
 </head>
 <body>
   <div id="mensagem-alerta"></div>
-    <table id="tabela-alimentos">
-      <thead>
-        <tr>
-          <th>Alimentos</th>
-          <th>Quantidade</th>
-          <th>Peguei</th>
-          <th>Valor Unitário</th>
-          <th>Valor Atual</th>
-        </tr>
-      </thead>
-      <tbody><!--itens gerados dinamicamente--></tbody>
-      <tfoot>
-        <tr>
-          <td colspan="4" style="text-align: right; font-weight: bold;">Total</td>
-          <td id="total-valor-atual">R$ 0,00</td>
-        </tr>
-      </tfoot>
-
-
-    </table>
-    <script src="estoque.js"></script>
+  <table id="tabela-alimentos">
+    <thead>
+      <tr>
+        <th>Alimentos</th>
+        <th>Quantidade</th>
+        <th>Peguei</th>
+        <th>Valor Unitário</th>
+        <th>Valor Atual</th>
+      </tr>
+    </thead>
+    <tbody><!--itens gerados dinamicamente--></tbody>
+    <tfoot>
+      <tr>
+        <td colspan="3" style="text-align: right; font-weight: bold;">Total</td>
+        <td id="total-valor-unitario">R$ 0,00</td>
+        <td id="total-valor-atual">R$ 0,00</td>
+      </tr>
+    </tfoot>
+  </table>
+  <script src="estoque.js"></script>
 </body>
 </html>
