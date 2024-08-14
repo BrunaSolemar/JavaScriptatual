@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de estoque</title>
+    <link rel="stylesheet" href="estoque.css">
+</head>
+<body>
+  <div id="mensagem-alerta"></div>
+    <table id="tabela-alimentos">
+      <thead>
+        <tr>
+          <th>Alimentos</th>
+          <th>Quantidade</th>
+          <th>Peguei</th>
+          <th>Valor Unitário</th>
+          <th>Valor Atual</th>
+        </tr>
+      </thead>
+      <tbody><!--itens gerados dinamicamente--></tbody>
+      <tfoot>
+        <tr>
+          <td colspan="4" style="text-align: right; font-weight: bold;">Total</td>
+          <td id="total-valor-atual">R$ 0,00</td>
+        </tr>
+      </tfoot>
+
+
+    </table>
+    <script src="estoque.js"></script>
+</body>
+</html>
