@@ -108,3 +108,51 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 });
+
+document.addEventListener("DOMContentLoaded", function() {
+    const tabelaBody = document.querySelector('#tabela-alimentos tbody');
+    
+    async function carregarAlimentos() {
+      const response = await fetch('/alimentos');
+      const alimentos = await response.json();
+      
+      alimentos.forEach(alimento => {
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+          <td>${alimento.nome}</td>
+          <td><select class="quantidade">${options.map(option => `<option value="${option}" ${option == alimento.quantidade ? 'selected' : ''}>${option}</option>`).join('')}</select></td>
+          <td><select class="peguei">${options.map(option => `<option value="${option}" ${option == alimento.peguei ? 'selected' : ''}>${option}</option>`).join('')}</select></td>
+          <td><input type="text" class="valor-unitario" value="R$ ${alimento.valor_unitario.toFixed(2).replace('.', ',')}" oninput="formatCurrency(this)"></td>
+          <td><input type="text" class="valor-atual" value="R$ ${alimento.valor_atual.toFixed(2).replace('.', ',')}" oninput="formatCurrency(this)"></td>
+        `;
+        tabelaBody.appendChild(newRow);
+      });
+    }
+  
+    async function atualizarAlimento(id, dados) {
+      await fetch(`/alimentos/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dados)
+      });
+    }
+  
+    // Integrar com os eventos do frontend
+    tabelaBody.addEventListener('change', async function(event) {
+      const target = event.target;
+      if (target.classList.contains('peguei') || target.classList.contains('valor-unitario')) {
+        const row = target.closest('tr');
+        const id = row.dataset.id;
+        const quantidade = row.querySelector('select.quantidade').value;
+        const peguei = row.querySelector('select.peguei').value;
+        const valorUnitario = parseFloat(row.querySelector('.valor-unitario').value.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
+        const valorAtual = calcularValorAtual(row);
+  
+        await atualizarAlimento(id, { quantidade, peguei, valor_unitario: valorUnitario, valor_atual: valorAtual });
+        updateTotal(target);
+      }
+    });
+  
+    carregarAlimentos();
+  });
+  
