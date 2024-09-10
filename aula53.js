@@ -28,7 +28,7 @@ console.log(ope[1](valores)) //op 1 pega a segunda função, multiplicação
 ope[2](valores) //não preciso mais usar console.log pq ja está na terceira função
 
 
-//para fazer a calculadora funcionar:
+//para fazer a calculadora funcionar:  ---  aula 54
 
 const btn_soma=document.querySelector("#btn_soma")
 const btn_subtracao=document.querySelector("#btn_subtracao")
