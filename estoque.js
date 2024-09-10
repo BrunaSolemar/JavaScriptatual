@@ -118,6 +118,7 @@ document.addEventListener("DOMContentLoaded", function() {
       
       alimentos.forEach(alimento => {
         const newRow = document.createElement('tr');
+        newRow.dataset.id = alimento.id
         newRow.innerHTML = `
           <td>${alimento.nome}</td>
           <td><select class="quantidade">${options.map(option => `<option value="${option}" ${option == alimento.quantidade ? 'selected' : ''}>${option}</option>`).join('')}</select></td>
@@ -138,21 +139,23 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   
     // Integrar com os eventos do frontend
+    
     tabelaBody.addEventListener('change', async function(event) {
-      const target = event.target;
-      if (target.classList.contains('peguei') || target.classList.contains('valor-unitario')) {
-        const row = target.closest('tr');
-        const id = row.dataset.id;
-        const quantidade = row.querySelector('select.quantidade').value;
-        const peguei = row.querySelector('select.peguei').value;
-        const valorUnitario = parseFloat(row.querySelector('.valor-unitario').value.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
-        const valorAtual = calcularValorAtual(row);
-  
-        await atualizarAlimento(id, { quantidade, peguei, valor_unitario: valorUnitario, valor_atual: valorAtual });
-        updateTotal(target);
-      }
-    });
-  
-    carregarAlimentos();
-  });
-  
+        const target = event.target;
+        if (target.classList.contains('peguei') || target.classList.contains('valor-unitario')) {
+          const row = target.closest('tr');
+          const id = row.dataset.id;
+          const quantidade = row.querySelector('select.quantidade').value;
+          const peguei = row.querySelector('select.peguei').value;
+          const valorUnitario = parseFloat(row.querySelector('.valor-unitario').value.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
+          const valorAtual = calcularValorAtual(row);
+      
+          await fetch(`/alimentos/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ quantidade, peguei, valor_unitario: valorUnitario, valor_atual: valorAtual })
+          });
+          updateTotal(target);
+        }
+      });
+    })
