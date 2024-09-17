@@ -1,7 +1,28 @@
-//Polimorfismo --> capacidade de um mesmo método ter açoes diferentes. Um determidado objeto pode ter varios construtores diferentes
+//Abstract --> termo de orientação a objetos --quando tem uma classe abstrata não pode ser instanciada, so serve de base pra outras classes, só pode ser extendida, serve como herança e classe base para outras bases
 
-class Carro{
-    constructor(tipo,estagioTurbo){
+class CarroPadrao{ //todo carro vai herdar essa classe
+    //para ser uma classe abstrata -- todas as classes terão essas especificações
+    constructor(){
+        if(this.constructor===CarroPadrao){
+            throw new TypeError("Esta classe não pode ser instanciada")  //throw=excessão , tipo de excessão=erro
+        }
+        //tornar obrigatório a implementação de um método:
+        if(this.ligar===undefined){
+            throw new TypeError("É obrigatório implementar o método Ligar")
+        }
+        if(this.desligar===undefined){
+            throw new TypeError("É obrigatório implementar o método Desligar")
+        }
+        this.rodas=4
+        this.portas=4
+        this.ligado=false
+    }
+    
+}
+
+class Carro extends CarroPadrao{
+      constructor(tipo,estagioTurbo){
+        super()
         this.turbo=new Turbo(estagioTurbo)
         if(tipo==1){
             this.velMax=120
@@ -19,8 +40,18 @@ class Carro{
         console.log(this.nome)
         console.log(this.velMax)
         console.log(this.turbo)
+        console.log(this.rodas)
+        console.log(this.portas)
+        console.log(this.ligado)
         console.log("-----------")
        }
+       ligar(){
+        this.ligado=true //implementando o método ligar que foi exigido na class CarroPadrao
+       } 
+       desligar(){
+        this.desligado=false //implementando o método desligar que foi exigido na class CarroPadrao
+    }
+       
     }
 
 
@@ -39,7 +70,7 @@ class Turbo{
 }
 
 //criando um novo carro:
-class CarroEspecial extends Carro{ //herda a class Carro
+class CarroEspecial extends Carro{ //herda a classe carroPadrao
     constructor(estagioTurbo){
         //chamando o construtor do pai, passando o tipo e estágio do turbo
         super(4,estagioTurbo) //definindo o tipo 4 que não foi definido no class Carro
@@ -64,6 +95,8 @@ class CarroEspecial extends Carro{ //herda a class Carro
 const c1=new Carro(1,0) //1=tipo   0=turbo ---> recebe os valores da class Turbo
 const c2=new Carro(1,1)
 const c3=new CarroEspecial(3) //Não precisa passar o tipo, só o estágio do turbo
+//const c4=new CarroPadrao() // no console vão dar o erro que essa classe nao pode ser instanciada (pq ela foi definida como abstrata), ou seja, ela vai definir valores para outras classes, mas ela nãopode ser "chamada"
+
 
 c1.info()
 c2.info()
